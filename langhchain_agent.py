@@ -1,4 +1,5 @@
 import os
+import re
 import asyncio
 import uuid
 from dotenv import load_dotenv
@@ -104,6 +105,21 @@ def make_agent():
     return agent_executor_history
 
 
+async def entering_lms():
+    page = STAGEHAND["page"]
+
+    username = os.getenv("LMS_USERNAME") 
+    password = os.getenv("LMS_PASSWORD")
+
+    await page.goto("https://learn.ucu.edu.ua/login")
+
+    await page.get_by_placeholder("Ім’я входу").fill(username)
+
+    await page.get_by_placeholder("Пароль").fill(password)
+
+    await page.get_by_role("button", name="Увійти").click()
+
+
 async def main():
     STAGEHAND["client"] = await get_config()
     STAGEHAND["page"] = STAGEHAND["client"].page
@@ -111,6 +127,9 @@ async def main():
     agent = make_agent()
 
     session_id = f"cli:{uuid.uuid4()}"
+
+    print("Entering LMS")
+    await entering_lms()
 
     print("Chat with agent (enter 'exit' to quit)")
     while True:
