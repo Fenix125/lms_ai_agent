@@ -133,7 +133,7 @@ async def main():
 
     print("Chat with agent (enter 'exit' to quit)")
     while True:
-        prompt = input("> ")
+        prompt = input("> ") or " "
         if prompt == "exit":
             break
         
