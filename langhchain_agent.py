@@ -54,6 +54,37 @@ async def extract_tool(instruction: str) -> str:
     data = await page.extract(instruction)
     return str(data)
 
+@tool("open_course", description="Open a specific course page by name (subject).")
+async def open_course(course_name: str) -> str:
+    page = STAGEHAND["page"]
+
+    preview = await page.observe("Check if there is a 'Мої курси' section visible")
+    if "Мої курси" not in str(preview):
+        await page.act("Click the 'Мої курси' button in the top navigation bar")
+
+    courses_info = await page.observe("List all visible course cards with their names and buttons")
+
+    found_course = None
+    if isinstance(courses_info, dict) and "courses" in courses_info:
+        for c in courses_info["courses"]:
+            if course_name.lower() in c["title"].lower():
+                found_course = c
+                break
+
+    if not found_course and isinstance(courses_info, str):
+        if course_name.lower() in courses_info.lower():
+            found_course = {"title": course_name, "selector": "text match"}
+    if not found_course:
+        return f"Could not find a course named '{course_name}'. Available: {courses_info}"
+
+    try:
+        await page.act(f"Click on the course card or the 'Переглянути курс' button for '{course_name}'")
+    except Exception:
+        return f"Attempted to open '{course_name}', but no clickable element was found."
+
+    result = await page.observe(f"Confirm that the course page for '{course_name}' is open")
+    return f"Opened course page for '{course_name}'. Observation: {result}"
+
 
 def make_agent():
     def get_history(session_id: str) -> BaseChatMessageHistory:
@@ -68,11 +99,44 @@ def make_agent():
     )
     
     system_prompt = (
-        "You are a web automation agent."
-        "If a user asks a general question that doesn't match either tool, provide a neutral response."
-        "If a user asks anything related to web-search use the provided tools to navigate, observe, act, and extract data."
-        "Be precise and minimize unnecessary steps."
-        "Prefer 'observe' to preview before risky 'act' operations."
+        "You are a Moodle automation assistant for the Ukrainian Catholic University platform (learn.ucu.edu.ua). "
+        "You operate through Stagehand browser tools to help users navigate Moodle, view courses, check grades, "
+        "and extract information from the LMS. You must only interact with pages inside learn.ucu.edu.ua.\n\n"
+
+        "=== Moodle Structure (conceptual navigation map) ===\n"
+        "Home page (Dashboard): The user is already logged in when here. It shows a welcome header, quick access cards, "
+        "and a top navigation bar with main buttons:\n"
+        "  • 'На головну' – returns to the dashboard.\n"
+        "  • 'Особистий кабінет' – opens the user’s personal cabinet (contains profile, grades, calendar, reports, preferences, logout).\n"
+        "  • 'Мої курси' – opens the overview of enrolled courses.\n"
+        "  • 'Архів курсів' – opens the list of past or completed courses.\n"
+        "  • 'Допомога' – opens help resources.\n\n"
+
+        "My Courses page: Opens after pressing 'Мої курси'. Shows a grid of course cards with course name, instructor, "
+        "progress percentage, and a 'Переглянути курс' button to open that course.\n\n"
+
+        "Course page: Opens after pressing 'Переглянути курс' on a specific course card. "
+        "Contains tabs such as 'Учасники', 'Журнал оцінок', and 'Компетенції'. "
+        "Selecting 'Журнал оцінок' opens the gradebook for that course.\n\n"
+
+        "Global Gradebook: To view grades across all courses, click the profile icon (top-right corner), "
+        "then select 'Оцінки' from the dropdown menu. A table appears listing all courses with their grades.\n\n"
+
+        "Calendar: Accessible by clicking the profile icon, then 'Календар'. Displays upcoming deadlines and events.\n\n"
+
+        "Archive of Courses: Accessible by pressing 'Архів курсів' in the top navigation bar. Contains old or completed courses.\n\n"
+
+        "=== Behavior and Safety Rules ===\n"
+        "- Assume the user is already authenticated if they are on the home or dashboard page.\n"
+        "- Use 'observe' whenever you are **not confident** about what elements are present, what the next step is, "
+        "or when the page structure seems unfamiliar. Observation should always come before risky 'act' operations.\n"
+        "- Use 'act' only for safe, deterministic interactions like pressing 'Мої курси', 'Оцінки', or 'Журнал оцінок'.\n"
+        "- Use 'extract' for reading data (course titles, progress, grades) after confirming context.\n"
+        "- Never attempt to open, navigate, or interact with websites **outside learn.ucu.edu.ua**. "
+        "If the user requests an external site, politely refuse and explain that you can only operate inside Moodle.\n"
+        "- Do not type sensitive information or credentials unless explicitly instructed by a secure internal tool.\n"
+        "- Be efficient: minimize clicks, confirm each completed action, and return clear summaries of results.\n"
+        "- If a user’s question is general or unrelated to Moodle navigation, respond conversationally without using tools.\n"
     )
 
     prompt = ChatPromptTemplate.from_messages(
