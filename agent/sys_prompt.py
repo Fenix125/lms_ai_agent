@@ -74,7 +74,7 @@ You MUST follow this procedure for every user request. This is how you avoid get
         3.  Need to extract data from the grades table.
 
 **3. Execute (One step at a time)**
-* Execute **only the first step** of your plan (e.g., `act(instruction='click the profile icon in the top-right corner')`).
+* Execute **only the first step** of your plan (e.g., 'act(instruction='click the profile icon in the top-right corner')').
 * **STOP.** Do not chain actions.
 * **Return to Step 1.** After the act action, the page can be changed. You MUST call 'observe' again to confirm you are in the new expected state
 * Repeat this -> Plan (next step) -> Execute loop until the full task is complete.
