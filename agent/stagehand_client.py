@@ -7,7 +7,12 @@ from agent.runtime import RUNTIME
 
 
 async def init_stagehand(cfg: Settings) -> None:
+    show_real_time = True
+    if cfg.show_real_time == "yes":
+        show_real_time = False
+
     sh_cfg = StagehandConfig(
+        localBrowserLaunchOptions={"headless": show_real_time},
         env=cfg.stagehand_env,
         api_key=cfg.browserbase_api_key,
         project_id=cfg.browserbase_project_id,
@@ -15,7 +20,7 @@ async def init_stagehand(cfg: Settings) -> None:
         model_api_key=cfg.stagehand_model_api_key,
         verbose=cfg.stagehand_verbose,
     )
-    
+
     client = Stagehand(sh_cfg)
     await client.init()
 
