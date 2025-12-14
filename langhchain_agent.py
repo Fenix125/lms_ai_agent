@@ -19,10 +19,6 @@ from typing import Type
 
 load_dotenv()
 
-TOTAL_PROMPT_TOKENS = 0
-TOTAL_COMPLETION_TOKENS = 0
-TOTAL_COST = 0.0
-
 async def get_config():
     cfg = StagehandConfig(
         env="LOCAL",
@@ -30,7 +26,7 @@ async def get_config():
         project_id=os.getenv("BROWSERBASE_PROJECT_ID"),
         model_name="openai/gpt-4.1-mini",
         model_api_key=os.getenv("OPENAI_API_KEY"),
-        verbose=2,
+        verbose=1,
     )
     sh = Stagehand(cfg)
     await sh.init()
@@ -38,8 +34,6 @@ async def get_config():
 
 STAGEHAND = {"client": None, "page": None}
 HISTORY_STORE = {}
-
-
 
 
 class NavigateTool(BaseTool):
@@ -124,6 +118,7 @@ class UploadFileTool(BaseTool):
         raise NotImplementedError("Sync not supported.")
     
 
+
 class UploadCSVInput(BaseModel):
     file_path: str = Field(..., description="Path to the CSV file to upload")
     selector: str = Field(
@@ -202,8 +197,8 @@ class UploadCSVTool(BaseTool):
 def make_agent(llm=None):
     if llm is None:
         llm = ChatOpenAI(
-            model="gpt-4.1-mini",
-            temperature=0.2,
+            model="gpt-4o-mini",
+            temperature=0.4,
             api_key=os.getenv("OPENAI_API_KEY"),
         )
     def get_history(session_id: str) -> BaseChatMessageHistory:
@@ -365,7 +360,9 @@ async def entering_lms():
 
 
 async def main():
-    global TOTAL_PROMPT_TOKENS, TOTAL_COMPLETION_TOKENS, TOTAL_COST
+    TOTAL_PROMPT_TOKENS = 0.0
+    TOTAL_COMPLETION_TOKENS = 0.0
+    TOTAL_COST = 0.0
 
     STAGEHAND["client"] = await get_config()
     STAGEHAND["page"] = STAGEHAND["client"].page
@@ -385,8 +382,8 @@ async def main():
 
         with get_openai_callback() as cb:
             tracked_llm = ChatOpenAI(
-                model="gpt-4.1-mini",
-                temperature=0.2,
+                model="gpt-4o-mini",
+                temperature=0.4,
                 api_key=os.getenv("OPENAI_API_KEY"),
             ).bind(callbacks=[cb])
             
