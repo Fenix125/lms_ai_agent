@@ -79,6 +79,11 @@ LLM-driven agent for the Ukrainian Catholic University Moodle (learn.ucu.edu.ua)
     ```
 -   After startup the agent logs into the LMS automatically, then waits for your prompts. Type `exit` to quit; Stagehand will close the browser session on shutdown.
 
+-   Or use streamlit UI:
+    ```bash
+    streamlit run ui/chat.py
+    ```
+
 ## Links
 
 -   Repository: https://github.com/Fenix125/lms_ai_agent
