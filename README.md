@@ -54,19 +54,18 @@ LLM-driven agent for the Ukrainian Catholic University Moodle (learn.ucu.edu.ua)
 
 ## Configuration (.env)
 
-| Variable                                        | Purpose / notes                                                   | Default                    |
-| ----------------------------------------------- | ----------------------------------------------------------------- | -------------------------- |
-| `LMS_USERNAME`, `LMS_PASSWORD`                  | Credentials for `learn.ucu.edu.ua` login.                         | required                   |
-| `LMS_BASE_URL`                                  | Base URL of the LMS.                                              | `https://learn.ucu.edu.ua` |
-| `BROWSERBASE_API_KEY`, `BROWSERBASE_PROJECT_ID` | Keys for the Browserbase project used by Stagehand.               | optional                   |
-| `STAGEHAND_ENV`                                 | Stagehand environment (`LOCAL` by default).                       | `LOCAL`                    |
-| `STAGEHAND_VERBOSE`                             | Verbosity level for Stagehand logs.                               | `2`                        |
-| `STAGEHAND_MODEL_NAME`                          | Model Stagehand uses for browser reasoning.                       | `openai/gpt-4.1-mini`      |
-| `STAGEHAND_MODEL_API_KEY`                       | API key for the Stagehand model (falls back to `OPENAI_API_KEY`). | empty                      |
-| `LLM_PROVIDER`                                  | `openai` or `google`.                                             | `openai`                   |
-| `LLM_TEMPERATURE`                               | Sampling temperature for the chat model.                          | `0.4`                      |
-| `OPENAI_API_KEY`, `OPENAI_MODEL`                | OpenAI key and model when `LLM_PROVIDER=openai`.                  | model: `gpt-4o-mini`       |
-| `GOOGLE_API_KEY`, `GOOGLE_MODEL`                | Google key and model when `LLM_PROVIDER=google`.                  | model: `gemini-2.5-flash`  |
+| Variable                                        | Purpose / notes                                                   | Default                   |
+| ----------------------------------------------- | ----------------------------------------------------------------- | ------------------------- |
+| `LMS_USERNAME`, `LMS_PASSWORD`                  | Credentials for `learn.ucu.edu.ua` login.                         | required                  |
+| `BROWSERBASE_API_KEY`, `BROWSERBASE_PROJECT_ID` | Keys for the Browserbase project used by Stagehand.               | optional                  |
+| `STAGEHAND_ENV`                                 | Stagehand environment (`LOCAL` by default).                       | `LOCAL`                   |
+| `STAGEHAND_VERBOSE`                             | Verbosity level for Stagehand logs.                               | `2`                       |
+| `STAGEHAND_MODEL_NAME`                          | Model Stagehand uses for browser reasoning.                       | `openai/gpt-4.1-mini`     |
+| `STAGEHAND_MODEL_API_KEY`                       | API key for the Stagehand model (falls back to `OPENAI_API_KEY`). | empty                     |
+| `LLM_PROVIDER`                                  | `openai` or `google`.                                             | `openai`                  |
+| `LLM_TEMPERATURE`                               | Sampling temperature for the chat model.                          | `0.4`                     |
+| `OPENAI_API_KEY`, `OPENAI_MODEL`                | OpenAI key and model when `LLM_PROVIDER=openai`.                  | model: `gpt-4o-mini`      |
+| `GOOGLE_API_KEY`, `GOOGLE_MODEL`                | Google key and model when `LLM_PROVIDER=google`.                  | model: `gemini-2.5-flash` |
 
 > **Note:** `agent/config.py` calls `require(...)`, so the required fields must be set before running or the app will exit. If you want to omit
 > something change it there
