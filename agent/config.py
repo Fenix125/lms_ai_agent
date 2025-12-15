@@ -20,8 +20,8 @@ class Settings:
     lms_username: str = os.getenv("LMS_USERNAME", "")
     lms_password: str = os.getenv("LMS_PASSWORD", "")
 
-    browserbase_api_key: str = require("BROWSERBASE_API_KEY")
-    browserbase_project_id: str = require("BROWSERBASE_PROJECT_ID")
+    browserbase_api_key: str = os.getenv("BROWSERBASE_API_KEY", "")
+    browserbase_project_id: str = os.getenv("BROWSERBASE_PROJECT_ID", "")
     stagehand_env: str = os.getenv("STAGEHAND_ENV", "LOCAL")
     stagehand_verbose: int = int(os.getenv("STAGEHAND_VERBOSE", "2"))
 
