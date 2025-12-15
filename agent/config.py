@@ -17,15 +17,15 @@ def require(name: str) -> str:
 @dataclass(frozen=True)
 class Settings:
     lms_base_url: str = "https://learn.ucu.edu.ua"
-    lms_username: str = require("LMS_USERNAME")
-    lms_password: str = require("LMS_PASSWORD")
+    lms_username: str = os.getenv("LMS_USERNAME", "")
+    lms_password: str = os.getenv("LMS_PASSWORD", "")
 
     browserbase_api_key: str = require("BROWSERBASE_API_KEY")
     browserbase_project_id: str = require("BROWSERBASE_PROJECT_ID")
     stagehand_env: str = os.getenv("STAGEHAND_ENV", "LOCAL")
     stagehand_verbose: int = int(os.getenv("STAGEHAND_VERBOSE", "2"))
 
-    stagehand_model_name: str = os.getenv("STAGEHAND_MODEL_NAME", "openai/gpt-4.1-mini")
+    stagehand_model_name: str = os.getenv("STAGEHAND_MODEL_NAME", "openai/gpt-4o-mini")
     stagehand_model_api_key: str = os.getenv("STAGEHAND_MODEL_API_KEY", os.getenv("OPENAI_API_KEY", ""))
 
     llm_provider: str = os.getenv("LLM_PROVIDER", "openai").lower()
@@ -37,5 +37,5 @@ class Settings:
     google_api_key: str = os.getenv("GOOGLE_API_KEY", "")
     google_model: str = os.getenv("GOOGLE_MODEL", "gemini-2.5-flash")
 
-    show_real_time: str = os.getenv("STAGEHAND_SHOW_REALTIME", "true")
+    show_realtime: str = os.getenv("STAGEHAND_SHOW_REALTIME", "true")
  
