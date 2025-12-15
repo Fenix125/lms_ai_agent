@@ -1,8 +1,11 @@
 import streamlit as st
+import uuid
 
 from state import init_state, settings_ready, get_settings
 from session import AgentSession, AsyncRunner
 from settings_page import render_settings
+from pathlib import Path
+
 
 st.set_page_config(page_title="LMS AI Assistant", layout="wide")
 
@@ -11,6 +14,34 @@ init_state()
 def render_chat():
     st.title("LMS AI Assistant")
     st.subheader("Chat")
+
+    #sidebar uploader only for Assistant page
+    with st.sidebar:
+        st.markdown("### Upload file for agent")
+        up = st.file_uploader(
+            "Upload a file",
+            type=None,
+            key="uploader_widget",
+        )
+
+        if up is not None:
+            upload_dir = Path.cwd() / "ui_uploads"
+            upload_dir.mkdir(parents=True, exist_ok=True)
+
+            suffix = Path(up.name).suffix
+            saved_path = upload_dir / f"{uuid.uuid4().hex}{suffix}"
+
+            saved_path.write_bytes(up.getbuffer())
+            st.session_state["uploaded_file_path"] = str(saved_path)
+
+            st.caption(f"Saved path:\n`{st.session_state['uploaded_file_path']}`")
+
+        if st.session_state.get("uploaded_file_path"):
+            if st.button("Clear uploaded file"):
+                st.session_state["uploaded_file_path"] = None
+                st.session_state["uploader_widget"] = None
+                st.rerun()
+
 
     for msg in st.session_state["chat_messages"]:
         with st.chat_message(msg["role"]):
@@ -37,7 +68,15 @@ def render_chat():
         st.session_state["pending_user_text"] = None
 
     if user_text:
+        file_path = st.session_state.get("uploaded_file_path")
+        if file_path:
+            user_text = (
+                f"{user_text}\n\n"
+                f"[UPLOADED_FILE_PATH]: {file_path}\n"
+            )
+       
         st.session_state["chat_messages"].append({"role": "user", "content": user_text})
+
         with st.chat_message("user"):
             st.write(user_text)
 

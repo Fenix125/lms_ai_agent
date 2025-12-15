@@ -20,6 +20,7 @@ def init_state() -> None:
     st.session_state.setdefault("chat_messages", [])  
     st.session_state.setdefault("agent_session", None)
     st.session_state.setdefault("pending_user_text", None)
+    st.session_state.setdefault("uploaded_file_path", None)
     
 
 def settings_ready() -> bool:
