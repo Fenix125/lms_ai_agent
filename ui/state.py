@@ -17,14 +17,19 @@ def init_state() -> None:
     st.session_state.setdefault("lms_password", "")
     st.session_state.setdefault("show_realtime", False)
 
-    st.session_state.setdefault("chat_messages", [])  
+    st.session_state.setdefault("chat_messages", [])
     st.session_state.setdefault("agent_session", None)
     st.session_state.setdefault("pending_user_text", None)
-    st.session_state.setdefault("uploaded_file_path", None)
-    
+    st.session_state.setdefault("uploaded_file_paths", None)
+
 
 def settings_ready() -> bool:
-    return bool(st.session_state.get("settings_saved")) and bool(st.session_state.get("lms_username")) and bool(st.session_state.get("lms_password"))
+    return (
+        bool(st.session_state.get("settings_saved"))
+        and bool(st.session_state.get("lms_username"))
+        and bool(st.session_state.get("lms_password"))
+    )
+
 
 def get_settings() -> UISettings:
     return UISettings(
