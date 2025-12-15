@@ -43,6 +43,7 @@ def build_agent(cfg: Settings):
         tools=tools,
         verbose=True,
         return_intermediate_steps=True,
+        max_iterations=90,
     )
 
     return RunnableWithMessageHistory(
