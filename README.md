@@ -73,7 +73,7 @@ LLM-driven agent for the Ukrainian Catholic University Moodle (learn.ucu.edu.ua)
 
 ## Running the agent
 
--   Start the CLI chat (OpenAI by default):
+-   Start the CLI chat:
     ```bash
     python -m agent.chat
     ```
